@@ -1,0 +1,22 @@
+[package]
+name = "stasis"
+version = "0.1.0"
+authors = ["Peter Donovan <peter@darkfusion.io>"]
+edition = "2021"
+license = "MIT"
+description = "Simple, flexible message-passing channels"
+repository = "https://github.com/dark-fusion/stasis"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "stasis"
+path = "src/main.rs"
+
+[dependencies]
+
+[profile.dev]
+split-debuginfo = "unpacked"
