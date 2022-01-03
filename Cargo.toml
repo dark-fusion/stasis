@@ -16,7 +16,5 @@ path = "src/lib.rs"
 name = "stasis"
 path = "src/main.rs"
 
-[dependencies]
-
 [profile.dev]
 split-debuginfo = "unpacked"

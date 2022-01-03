@@ -16,8 +16,8 @@ target/
 .env*
 !.env.example
 
-# Client builds
-static/
+# Internal / Specifications
+/*internal/
 
 # Logs
 logs/
