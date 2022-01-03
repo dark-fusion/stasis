@@ -1,11 +1,20 @@
 # Stasis
 
-Simple, flexible message-passing channels
+Prototype implementations of concurrent data structures.
 
-## Description
+## Purpose
 
-The main concurrency-based primitives and data structures are atomically reference-counted pointers,
-mutexes and condition variables.
+This repository is a tool for brainstorming and is intended to produce useful implementations that
+can be used in real projects.
+
+### Building Blocks
+
+Currently, the basic building blocks used are concurrency-based primitives and data structures such
+as:
+
+- `Arc`: atomically reference-counted pointers
+- `Mutex`: mutual exclusion locks
+- `Condvar`: condition variables
 
 ## Licensing
 

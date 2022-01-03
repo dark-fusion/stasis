@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Peter Donovan <peter@darkfusion.io>"]
 edition = "2021"
 license = "MIT"
-description = "Simple, flexible message-passing channels"
+description = "Prototype implementations of concurrent data structures"
 repository = "https://github.com/dark-fusion/stasis"
 readme = "README.md"
 
