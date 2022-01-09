@@ -106,7 +106,7 @@ pub fn channel<T>() -> (Sender<T>, Receiver<T>) {
             shared: shared.clone(),
         },
         Receiver {
-            shared: shared.clone(),
+            shared: shared,
             buffer: VecDeque::default(),
         },
     )
@@ -139,7 +139,7 @@ mod tests {
 
     #[test]
     fn send_multiple_messages() {
-        let (mut tx, mut rx) = channel();
+        let (mut tx, rx) = channel();
         for i in 1..10 {
             tx.send(i);
             tx.send(i + 1);
