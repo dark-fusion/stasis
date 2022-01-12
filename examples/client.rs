@@ -1,8 +1,11 @@
-use tokio::io::{stdin, AsyncBufReadExt, AsyncWriteExt, BufReader};
+use stasis::logging::initialize_logger;
+use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    initialize_logger().expect("failed to initialize tracing logger");
+
     let address = std::env::args()
         .skip(1)
         .nth(1)
@@ -10,27 +13,26 @@ async fn main() -> std::io::Result<()> {
 
     let mut stream = TcpStream::connect(&address).await?;
 
-    // Split the stream into reader/writer
-    let (reader, mut writer) = stream.split();
-    let mut lines_from_server = BufReader::new(reader).lines();
-    let mut lines_from_stdin = BufReader::new(stdin()).lines();
+    let (r, mut w) = stream.split();
+    let mut server_lines = BufReader::new(r).lines();
+    let mut stdin_lines = BufReader::new(io::stdin()).lines();
 
     loop {
         tokio::select! {
-            line = lines_from_server.next_line() => match line {
+            line = server_lines.next_line() => match line {
                 Ok(Some(line)) => {
                     println!("{}", line);
                 },
                 Ok(None) => {
-                    eprintln!("Received nothing from client");
+                    eprintln!("Received empty response from server");
                 }
                 Err(_) => break,
             },
-            line = lines_from_stdin.next_line() => match line {
+            line = stdin_lines.next_line() => match line {
                 Ok(line) => {
                     let line = line.unwrap();
-                    writer.write_all(line.as_bytes()).await?;
-                    writer.write_all(b"\n").await?;
+                    w.write_all(line.as_bytes()).await?;
+                    w.write_all(b"\n").await?;
                 }
                 Err(_) => break,
             }

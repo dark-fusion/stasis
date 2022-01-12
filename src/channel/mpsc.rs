@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
-use std::sync::{Arc, Condvar, Mutex};
+use std::sync::Arc;
 
-// TODO: Sender failure if `send` called with disconnected Receiver
+use parking_lot::{Condvar, Mutex};
 
 pub struct Sender<T> {
     shared: Arc<Shared<T>>,
@@ -10,7 +10,7 @@ pub struct Sender<T> {
 impl<T> Sender<T> {
     /// Push a message onto the mpsc
     pub fn send(&mut self, t: T) {
-        let mut inner = self.shared.inner.lock().unwrap();
+        let mut inner = self.shared.inner.lock();
         inner.queue.push_back(t);
         drop(inner);
         self.shared.cvar.notify_one();
@@ -19,7 +19,7 @@ impl<T> Sender<T> {
 
 impl<T> Clone for Sender<T> {
     fn clone(&self) -> Self {
-        let mut inner = self.shared.inner.lock().unwrap();
+        let mut inner = self.shared.inner.lock();
         inner.senders += 1;
         drop(inner);
 
@@ -31,7 +31,7 @@ impl<T> Clone for Sender<T> {
 
 impl<T> Drop for Sender<T> {
     fn drop(&mut self) {
-        let mut inner = self.shared.inner.lock().unwrap();
+        let mut inner = self.shared.inner.lock();
         inner.senders -= 1;
         let was_last = inner.senders == 0;
         drop(inner);
@@ -53,7 +53,7 @@ impl<T> Receiver<T> {
             return Some(t);
         }
 
-        let mut inner = self.shared.inner.lock().unwrap();
+        let mut inner = self.shared.inner.lock();
 
         loop {
             match inner.queue.pop_front() {
@@ -65,7 +65,7 @@ impl<T> Receiver<T> {
                 }
                 None if inner.senders == 0 => return None,
                 None => {
-                    inner = self.shared.cvar.wait(inner).unwrap();
+                    self.shared.cvar.wait(&mut inner);
                 }
             };
         }
@@ -95,18 +95,17 @@ pub fn channel<T>() -> (Sender<T>, Receiver<T>) {
         senders: 1,
     };
 
-    let shared = Shared {
+    let shared = Arc::new(Shared {
         inner: Mutex::new(inner),
         cvar: Condvar::new(),
-    };
+    });
 
-    let shared = Arc::new(shared);
     (
         Sender {
-            shared: shared.clone(),
+            shared: Arc::clone(&shared),
         },
         Receiver {
-            shared: shared,
+            shared: Arc::clone(&shared),
             buffer: VecDeque::default(),
         },
     )

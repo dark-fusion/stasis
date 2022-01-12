@@ -21,9 +21,16 @@ bytes = "1"
 futures = "0.3"
 parking_lot = { version = "0.11", features = ["arc_lock"] }
 tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
 tokio-util = { version = "0.6", features = ["codec"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 # Dev profile updated to take advantage of `split-debuginfo`, decreasing
 # compilation times during development.
 [profile.dev]
 split-debuginfo = "unpacked"
+
+[[example]]
+name = "client"
+path = "examples/client.rs"
