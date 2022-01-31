@@ -19,7 +19,7 @@ path = "src/main.rs"
 [dependencies]
 bytes = "1"
 futures = "0.3"
-parking_lot = { version = "0.11", features = ["arc_lock"] }
+parking_lot = { version = "0.12", features = ["arc_lock"] }
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
 tokio-util = { version = "0.6", features = ["codec"] }
