@@ -4,7 +4,10 @@ version = "0.1.0"
 authors = ["Peter Donovan <peter@darkfusion.io>"]
 edition = "2021"
 license = "MIT"
-description = "Prototype implementations of concurrent data structures"
+description = """
+Stasis is an ephemeral, key-value store that can be used as an in-memory
+database or caching service.
+"""
 repository = "https://github.com/dark-fusion/stasis"
 readme = "README.md"
 
@@ -12,25 +15,21 @@ readme = "README.md"
 [lib]
 path = "src/lib.rs"
 
-[[bin]]
-name = "stasis"
-path = "src/main.rs"
-
 [dependencies]
 bytes = "1"
-futures = "0.3"
-parking_lot = { version = "0.11", features = ["arc_lock"] }
+futures = { version = "0.3", default-features = false, features = ["std"] }
+parking_lot = { version = "0.12", features = ["arc_lock"] }
+serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
-tokio-util = { version = "0.6", features = ["codec"] }
+tokio-util = { version = "0.7", features = ["codec"] }
 tracing = "0.1"
+tracing-futures = "0.2"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
-# Dev profile updated to take advantage of `split-debuginfo`, decreasing
-# compilation times during development.
 [profile.dev]
+# Disable debug for 'dev' profile as we don't really use debug symbols here and
+# will benefit from faster compilation times.
+debug = 0
+# Helps decrease compilation times on Mac OS. May be irrelevant if `debug = 0`.
 split-debuginfo = "unpacked"
-
-[[example]]
-name = "client"
-path = "examples/client.rs"

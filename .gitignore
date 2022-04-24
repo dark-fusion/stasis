@@ -20,6 +20,7 @@ target/
 /*internal/
 
 # Logs
+*.log
 logs/
 
 # IDE / Editors

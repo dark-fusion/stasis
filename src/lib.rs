@@ -1,6 +1,10 @@
-pub mod channel;
-pub mod database;
+// Cache module
+mod cache;
+pub use cache::{Engine, Store};
+
 pub mod logging;
+pub mod protocol;
+pub mod server;
 
 /// Generic `Error` type returned by most functions.
 ///
